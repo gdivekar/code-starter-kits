@@ -1,22 +1,36 @@
-﻿using System;
+﻿using BowlingBall.Base;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BowlingBall
 {
-    public class Game
-    {
-        public void Roll(int pins)
-        {
-            // Add your logic here. Add classes as needed.
-        }
+	public class Game
+	{
+		private const int numberOfFrames = 10;
 
-        public int GetScore()
-        {
-            // Returns the final score of the game.
-            return 0;
-        }
-    }
+		private readonly List<int> rolls;
+		private readonly List<IFrame> frames;
+		private readonly IGameScore gameScore;
+		public Game(IGameSetup gameSetup, IGameScore score)
+		{
+			this.gameScore = score;
+			frames = gameSetup.GetFrames(numberOfFrames);
+			this.rolls = new List<int>();
+		}
+
+		public Game() : this(new GameSetup(), new GameScore()) // Manual Dependency Injection instead of using DI container
+		{
+
+		}
+
+		public void Roll(int pins)
+		{
+			rolls.Add(pins);
+		}
+
+		public int GetScore()
+		{
+			return gameScore.CalculateScore(frames, rolls);
+		}
+
+	}
 }
